@@ -253,6 +253,7 @@ def apns_send_message(
 	loc_key: str = None,
 	priority: int = None,
 	collapse_id: str = None,
+	mutable_content: int = None,
 	err_func: ErrFunc = None,
 ):
 	"""
@@ -275,6 +276,9 @@ def apns_send_message(
 		apns_service = APNsService(
 			application_id=application_id, creds=creds, topic=topic, err_func=err_func
 		)
+		aps_kwargs = {}
+		if mutable_content:
+			aps_kwargs["mutable-content"] = mutable_content
 
 		request = apns_service._create_notification_request_from_args(
 			registration_id,
@@ -287,6 +291,7 @@ def apns_send_message(
 			loc_key=loc_key,
 			priority=priority,
 			collapse_id=collapse_id,
+			aps_kwargs=aps_kwargs
 		)
 		res = apns_service.send_message(request)
 		if not res.is_successful:
@@ -313,6 +318,7 @@ def apns_send_bulk_message(
 	loc_key: str = None,
 	priority: int = None,
 	collapse_id: str = None,
+	mutable_content: int = None,
 	err_func: ErrFunc = None,
 ):
 	"""
@@ -335,6 +341,9 @@ def apns_send_bulk_message(
 	apns_service = APNsService(
 		application_id=application_id, creds=creds, topic=topic, err_func=err_func
 	)
+	aps_kwargs = {}
+	if mutable_content:
+		aps_kwargs["mutable-content"] = mutable_content
 	for registration_id in registration_ids:
 		request = apns_service._create_notification_request_from_args(
 			registration_id,
@@ -347,6 +356,7 @@ def apns_send_bulk_message(
 			loc_key=loc_key,
 			priority=priority,
 			collapse_id=collapse_id,
+			aps_kwargs=aps_kwargs
 		)
 
 		result = apns_service.send_message(request)
